@@ -8,7 +8,7 @@ version = "0.0.1"
 authors = [
   { name="David DUBOURG", email="d.dubourg@gmail.com" },
 ]
-description = "A runtime to provide product oriented in DevOps approach"
+description = "A plugin automates interactions with GitLab"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
