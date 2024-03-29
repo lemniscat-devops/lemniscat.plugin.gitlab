@@ -45,9 +45,11 @@ class Action(PluginCore):
 
         git = GitLab(gitlab_url, private_token)
         if(command == 'createRepository'):
+            self._logger.debug(f'gitLab {command} run')
             result = git.create_project(project_name, user_id=organization)
 
         if(result[0] != 0):
+            self._logger.error(f'gitLab {command}, Status: Failed, Errors: {result[1]} {result[2]}')
             return TaskResult(
                 name=f'gitLab {command}',
                 status='Failed',

@@ -39,15 +39,20 @@ class GitLab:
         try:
             project_data = {'name': project_name}
             project_data.update(kwargs)
-        
-            if user_id:
-                # Créer le projet sous un utilisateur spécifique
-                project = self.gl.projects.create(project_data, user_id=user_id)
+            
+            projects = self.gl.projects.list(search=project_name)
+            project_found = next((project for project in projects if project.path_with_namespace == f"{user_id}/{project_name}"), None)
+            if( project_found ):
+                log.info(f"Project {user_id}/{project_name} already exist")
             else:
-                # Créer le projet sous l'utilisateur authentifié
-                project = self.gl.projects.create(project_data)
-        except:
+                if user_id:
+                    # Créer le projet sous un utilisateur spécifique
+                    project = self.gl.projects.create(project_data, user_id=user_id)
+                else:
+                    # Créer le projet sous l'utilisateur authentifié
+                    project = self.gl.projects.create(project_data)
+        except Exception as ex:
             e = sys.exc_info()[0]
-            return 1, '', '{e}'
+            return 1, ex.error_message, sys.exc_info()[-1].tb_frame
         
         return 0, '',''
