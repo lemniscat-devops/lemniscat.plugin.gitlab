@@ -47,6 +47,9 @@ class Action(PluginCore):
         if(command == 'createRepository'):
             self._logger.debug(f'gitLab {command} run')
             result = git.create_project(project_name, user_id=organization)
+        elif(command == 'createPipeline'):
+            self._logger.debug(f'gitLab {command} run')
+            result = git.create_pipeline(project_name, user_id=organization)
 
         if(result[0] != 0):
             self._logger.error(f'gitLab {command}, Status: Failed, Errors: {result[1]} {result[2]}')

@@ -56,3 +56,29 @@ class GitLab:
             return 1, ex.error_message, sys.exc_info()[-1].tb_frame
         
         return 0, '',''
+    
+    def create_pipeline(self, project_name, user_id, ref='main') -> None:
+        """
+        Crée un pipeline pour le projet GitLab spécifié.
+
+        :param project_name: Le nom du nouveau projet.
+        :param user_id: L'ID de l'utilisateur sous lequel le projet sera créé.
+        :param ref: La référence pour laquelle le pipeline doit être créé (nom de branche ou tag).
+        """
+        try:
+            projects = self.gl.projects.list(search=project_name, user_id=user_id)
+            project_found = next((project for project in projects if project.path_with_namespace == f"{user_id}/{project_name}"), None)
+            if( project_found ):
+                if( project_found.pipelines.len > 0):
+                    # Création du pipeline
+                    pipeline = project_found.pipelines.create({'ref': ref})
+                else:
+                    log.info(f"Pipeline does not exist in Project {user_id}/{project_name}")
+            else:
+                log.info(f"Project {user_id}/{project_name} does not exist")
+
+        except Exception as ex:
+            e = sys.exc_info()[0]
+            return 1, ex.error_message, sys.exc_info()[-1].tb_frame
+        
+        return 0, '', ''
