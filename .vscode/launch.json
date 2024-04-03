@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Débogueur Python",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\src\\lemniscat\\plugin\\gitlab\\main.py",
+            "console": "integratedTerminal",
+            "python": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+            "args": [
+                    "-p",
+                    "{ 'action': 'createRepository', 'gitlabUrl': 'https://gitlab.com', 'token': 'glpat-_Xd1yy9z3MKFgqaZPRLj', 'name': 'lemniscat', 'organization': 'pesked' }",
+                    "-v",
+                    "{ }"
+                ]
+        }
+    ]
+}

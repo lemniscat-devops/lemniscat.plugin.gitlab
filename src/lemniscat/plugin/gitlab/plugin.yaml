@@ -1,0 +1,19 @@
+name: 'GitLab Plugin'
+alias: 'gitLab'
+creator: 'ddubourg'
+runtime:
+  main: 'main.py'
+  tests:
+    - 'tests/core.py'
+repository: ''
+description: 'gitlab plugin for lemniscat'
+version: '0.0.1'
+parameters:
+  - name: 'action'
+    type: 'string'
+    required: false
+requirements:
+  - name: 'PyYAML'
+    version: '6.0.1'
+  - name: 'pytz'
+    version: '2023.3'
