@@ -10,7 +10,7 @@
             "python": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
             "args": [
                     "-p",
-                    "{ 'action': 'addMembers', 'gitlabUrl': 'https://gitlab.com', 'token': 'xxxxxxxxxxxxxx', 'projectname': 'infrastructure', 'groupname': 'lemniscat', 'parentgroupname': 'peskedlabs/lemniscat', 'organization': 'pesked', 'memberswithaccesslevel': [{'member': 'ddubourg@groupeonepoint.com', 'accesslevel': 20},{'member': 'ddubourg@gmail.com', 'accesslevel': 30}] }",
+                    "{ 'action': 'createDirectories', 'gitlabUrl': 'https://gitlab.com', 'token': 'xxxxxxxxxxxxxxxx', 'projectname': 'infrastructure', 'groupname': 'lemniscat','parentgroupname': 'peskedlabs/lemniscat', 'organization': 'pesked', 'memberswithaccesslevel': [{'member': 'ddubourg@groupeonepoint.com', 'accesslevel': 20},{'member': 'ddubourg@gmail.com', 'accesslevel': 30}], 'directoryStructure': ['terraform','terraform/params','terraform/terragrunt','terraform/modules'] }",
                     "-v",
                     "{ }"
                 ]

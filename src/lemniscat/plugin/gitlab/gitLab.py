@@ -168,3 +168,69 @@ class GitLab:
             return 1, ex.error_message, sys.exc_info()[-1].tb_frame
 
         return 0, '', ''
+    
+    def create_directory_structure(self, project_name, group_path=None, directory_structure=None):
+        """
+        Crée une arborescence de répertoires dans un projet GitLab.
+
+        :param project_name: Le nom du projet.
+        :param group_path: Le chemin du groupe contenant le projet (optionnel).
+        :param directory_structure: Un dictionnaire représentant l'arborescence de répertoires à créer.
+        """
+        try:
+            if group_path:
+                # Rechercher le projet dans le groupe spécifié
+                group = self.gl.groups.get(group_path)
+                group_projects = group.projects.list(search=project_name)
+                group_project = next((p for p in group_projects if p.name == project_name), None)
+                if group_project:
+                    project = self.gl.projects.get(group_project.id)
+                else:
+                    project = None
+            else:
+                # Rechercher le projet sans groupe spécifié
+                projects = self.gl.projects.list(search=project_name)
+                project = next((p for p in projects if p.name == project_name), None)
+
+            if project:
+                if directory_structure:
+                    self._create_directories_recursive(project, directory_structure)
+                else:
+                    log.info(f"No directory structure provided for project {project.name}")
+            else:
+                log.warning(f"Project {project_name} not found")
+
+        except Exception as ex:
+            log.error(f"An error occurred while creating directory structure in project: {ex}")
+            return 1, ex.error_message, sys.exc_info()[-1].tb_frame
+
+        return 0, '', ''
+
+    def _create_directories_recursive(self, project, directory_structure, current_path=''):
+        """
+        Crée récursivement des répertoires dans un projet GitLab en créant et supprimant des fichiers temporaires.
+
+        :param project: L'objet Project du projet GitLab.
+        :param directory_structure: Un tableau représentant l'arborescence de répertoires à créer.
+        :param current_path: Le chemin actuel dans l'arborescence (utilisé pour la récursivité).
+        """
+        actions = []
+        for directory in directory_structure:
+            try:
+                # Vérifier si le répertoire existe déjà
+                project.repository_tree(path=directory, ref='main', all=True)
+                log.info(f"Directory {directory} already exists in project {project.name}")
+            except git.exceptions.GitlabGetError:
+                # Ajouter un fichier .gitkeep pour créer le répertoire
+                actions.append({
+                    'action': 'create',
+                    'file_path': f'{directory}/.gitkeep',
+                    'content': ''
+                })
+
+        if actions:
+            commit_message = f"Create directory {directory}"
+            project.commits.create({'branch': 'main','commit_message': commit_message,'actions': actions})
+            log.info(f"{len(actions)} directories created in project {project.name}")
+        else:
+            log.info(f"Nothing to create in project {project.name}")

@@ -44,6 +44,7 @@ class Action(PluginCore):
         parent_path = self.parameters["parentgroupname"]
         organization = self.parameters['organization']
         members_Withaccesslevel = self.parameters['memberswithaccesslevel']
+        directory_structure =   self.parameters['directoryStructure']
 
         git = GitLab(gitlab_url, private_token)
         if(command == 'createProject'):
@@ -58,6 +59,9 @@ class Action(PluginCore):
         elif(command == 'createGroup'):
             self._logger.debug(f'gitLab {command} run')
             result = git.create_group(group_name, parent_path)
+        elif(command == 'createDirectories'):
+            self._logger.debug(f'gitLab {command} run')
+            result = git.create_directory_structure(project_name, parent_path, directory_structure)
 
         if(result[0] != 0):
             self._logger.error(f'gitLab {command}, Status: Failed, Errors: {result[1]} {result[2]}')
