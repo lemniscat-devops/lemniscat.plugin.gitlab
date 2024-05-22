@@ -8,7 +8,6 @@ import re
 from lemniscat.core.contract.engine_contract import PluginCore
 from lemniscat.core.model.models import Meta, TaskResult, VariableValue
 from lemniscat.core.util.helpers import FileSystem, LogUtil
-
 from gitLab import GitLab
 
 _REGEX_CAPTURE_VARIABLE = r"(?:\${{(?P<var>[^}]+)}})"
@@ -40,13 +39,29 @@ class Action(PluginCore):
 
         gitlab_url   = self.parameters['gitlabUrl']
         private_token = self.parameters['token']
-        project_name = self.parameters['name']
+        project_name = self.parameters['projectname']
+        group_name = self.parameters["groupname"]
+        parent_path = self.parameters["parentgroupname"]
         organization = self.parameters['organization']
+        members_Withaccesslevel = self.parameters['memberswithaccesslevel']
+        directory_structure =   self.parameters['directoryStructure']
 
         git = GitLab(gitlab_url, private_token)
-        if(command == 'createRepository'):
+        if(command == 'createProject'):
             self._logger.debug(f'gitLab {command} run')
-            result = git.create_project(project_name, user_id=organization)
+            result = git.create_project(project_name, organization, parent_path)
+        elif(command == 'createPipeline'):
+            self._logger.debug(f'gitLab {command} run')
+            result = git.create_pipeline(project_name, user_id=organization)
+        elif(command == 'addMembers'):
+            self._logger.debug(f'gitLab {command} run')
+            result = git.add_member_to_project(project_name, parent_path, members_Withaccesslevel)
+        elif(command == 'createGroup'):
+            self._logger.debug(f'gitLab {command} run')
+            result = git.create_group(group_name, parent_path)
+        elif(command == 'createDirectories'):
+            self._logger.debug(f'gitLab {command} run')
+            result = git.create_directory_structure(project_name, parent_path, directory_structure)
 
         if(result[0] != 0):
             self._logger.error(f'gitLab {command}, Status: Failed, Errors: {result[1]} {result[2]}')
